@@ -15,69 +15,196 @@
 #define bus LATD
 
 //..............variables globales y prototipos de funcion.........................................................
+//      VARIABLES PARA LCD
 unsigned char buffer[40];
-unsigned char A=0;
-unsigned int x=0;
-unsigned int num=0;
+float voltaje = 0;
 
+//      DECLARACIÓN VARIABLES DE LECTURA DE SENSORES
+unsigned int s0, s1, s2, s3, s4, s5, s6, s7;
+int valor = 0b11111111;
+
+
+//      FUNCIÓN CONFIGURACIÓN PUERTOS DE ENTRADA Y SALIDA
 void setup_Ports_In_Out(void);
-void setup_AnalogDigitalConverter(void);
 
+//      FUNCIONES FUNCIONAMIENTO LCD
 void ini_LCD(void);
 void enable(void);
 void dato_LCD(unsigned char dato);  
 void ins_LCD(unsigned char dato);
 void write_LCD(unsigned char tam);
 
+//      FUNCIONES CONVERSOR ANALOGO - DIGITAL
+void setup_AnalogDigitalConverter(void);
 unsigned int Conversor_ADC(unsigned char canal);
 
+//      FUNCIONES PWM
 void conf_PWM(void);
 void duty_1(unsigned char dc);
+void duty_2(unsigned char dc);
 
-//..............codigo principal................................................................
-void main(void) 
-{    
-    //.........................conf perifericos.................................................
+//-----------------------       INICIO FUNCIÓN | RUTINA PRINCIPAL
+void main(void)
+{
+    //      INICIALIZACIÓN DE VARIABLES SENSORES EN 0.
+    s0  =  s1  =  s2  =  s3  =  s4  =  s5  =  s6  =  s7  =  0;
+    //      CONFIGURAMOS PINES DE ENTRADA Y SALIDA, CONVERSOR AD Y PWM.
     setup_Ports_In_Out();
     setup_AnalogDigitalConverter();
     conf_PWM();
-    //.........................bucle.............................................................
+    ini_LCD();
+
     while(1)
     {
-        ini_LCD();
-        while (1)
+        duty_1(30);
+        duty_2(70);
+
+
+        ins_LCD(128);
+        voltaje =  Conversor_ADC(0);
+        s0  =  voltaje;
+        s0 =   s0 * 0.00488;
+        if( s0 < 2.3 )
         {
-            __delay_ms(500);
-            ins_LCD(1);
-            num++;
-            write_LCD(sprintf(buffer,"LCD OKI DOKI",num));
+            ins_LCD(128);
+            write_LCD(sprintf(buffer,"0"));
+            // valor = valor & 0b01111111;
+            // ins_LCD(192);
+            // write_LCD(sprintf(buffer,"%i",valor));
         }
+        else
+        {
+            ins_LCD(128);
+            write_LCD(sprintf(buffer,"1"));
+        }
+
+        voltaje =  Conversor_ADC(1);
+        s1 =  voltaje;
+        s1 =   s1 * 0.00488;
+        if( s1 < 2.3 )
+        {
+            ins_LCD(129);
+            write_LCD(sprintf(buffer,"0"));
+        }
+        else
+        {
+            ins_LCD(129);
+            write_LCD(sprintf(buffer,"1"));
+        }
+
+        voltaje =  Conversor_ADC(2);
+        s2 =  voltaje;
+        s2 =   s2 * 0.00488;
+        if( s2 < 2.3 )
+        {
+            ins_LCD(130);
+            write_LCD(sprintf(buffer,"0"));
+        }
+        else
+        {
+            ins_LCD(130);
+            write_LCD(sprintf(buffer,"1"));
+        }
+
+        voltaje =  Conversor_ADC(3);
+        s3 =  voltaje;
+        s3 =   s3 * 0.00488;
+        if( s3 < 2.3 )
+        {
+            ins_LCD(131);
+            write_LCD(sprintf(buffer,"0"));
+        }
+        else
+        {
+            ins_LCD(131);
+            write_LCD(sprintf(buffer,"1"));
+        }
+
+        voltaje =  Conversor_ADC(4);
+        s4 =  voltaje;
+        s4 =   s4 * 0.00488;
+        if( s4 < 2.3 )
+        {
+            ins_LCD(132);
+            write_LCD(sprintf(buffer,"0"));
+        }
+        else
+        {
+            ins_LCD(132);
+            write_LCD(sprintf(buffer,"1"));
+        }
+
+        voltaje =  Conversor_ADC(5);
+        s5 =  voltaje;
+        s5 =   s5 * 0.00488;
+        if( s5 < 2.3 )
+        {
+            ins_LCD(133);
+            write_LCD(sprintf(buffer,"0"));
+        }
+        else
+        {
+            ins_LCD(133);
+            write_LCD(sprintf(buffer,"1"));
+        }
+
+        voltaje =  Conversor_ADC(6);
+        s6 =  voltaje;
+        s6 =   s6 * 0.00488;
+        if( s6 < 2.3 )
+        {
+            ins_LCD(134);
+            write_LCD(sprintf(buffer,"0"));
+        }
+        else
+        {
+            ins_LCD(134);
+            write_LCD(sprintf(buffer,"1"));
+        }
+
+        voltaje =  Conversor_ADC(7);
+        s7 =  voltaje;
+        s7 =   s7 * 0.00488;
+        if( s7 < 2.3 )
+        {
+            ins_LCD(135);
+            write_LCD(sprintf(buffer,"0"));
+        }
+        else
+        {
+            ins_LCD(135);
+            write_LCD(sprintf(buffer,"1"));
+        }
+        //__delay_ms(100);
+
+        //ins_LCD(1);
     }
 }
+//-----------------------       FIN RUTINA PRINCIPAL
 
-//......................funciones............................................................
+//-----------------------       DECLARACIÓN FUNCIONES
 void setup_Ports_In_Out(void)
 {
-    TRISB=0xFF;         // puerto B de entrada
-    LATB=0;             // limpiar puerto B
-    PORTB=0;            // limpiar puerto B
+    TRISB   =   0xFF;         // puerto B de entrada
+    LATB    =   0;             // limpiar puerto B
+    PORTB   =   0;            // limpiar puerto B
     
-    TRISD=0x00;         // puerto D de salida
-    LATD=0;             // limpia puerto D
-    PORTD=0;            // limpia puerto D
+    TRISD   =   0x00;         // puerto D de salida
+    LATD    =   0;             // limpia puerto D
+    PORTD   =   0;            // limpia puerto D
     
-    TRISC=0x00;         // puerto C de salida
-    LATC=0;             // limpia puerto C
-    PORTC=0;            // limpia puerto C
+    TRISC   =   0x00;         // puerto C de salida
+    LATC    =   0;             // limpia puerto C
+    PORTC   =   0;            // limpia puerto C
     
-    // TRISE=0x07;
-    // LATE=0;
-    // PORTE=0;
+    TRISE   =   0x07;
+    LATE    =   0;
+    PORTE   =   0;
 }
 void setup_AnalogDigitalConverter(void)
 {
-    ADCON0      =       0b00000001;
-    ADCON1      =       0;
+    ADCON0  =   0b00000001;
+    ADCON1  =   0;
 }
 
 unsigned int Conversor_ADC(unsigned char canal)
@@ -95,10 +222,10 @@ unsigned int Conversor_ADC(unsigned char canal)
         __delay_us(50);
         GO=1;
         while(GO==1);
-        ADRESL  =    ADRESL >>  6;
-        temp    =    ADRESH;
-        temp    =   temp    <<  2;
-        temp    =   temp    |   ADRESL;
+        ADRESL  =   ADRESL >>  6;
+        temp    =   ADRESH;
+        temp    =   temp   <<  2;
+        temp    =   temp   |   ADRESL;
 
         return temp;
     }
@@ -176,8 +303,10 @@ void conf_PWM(void)
 {
     PR2=124;
     CCPR1L=0;
+    CCPR2L=0;
     T2CON=0b00000101;
     CCP1CON=0b00001100;
+    CCP2CON=0b00001100;
 }
 
 //      DUTY_CICLE_1
@@ -191,4 +320,17 @@ void duty_1(unsigned char dc)
     lamda&=0x30;
     CCP1CON&=0xCF;
     CCP1CON|=lamda;
+}
+
+//      DUTY_CICLE_2
+void duty_2(unsigned char dc)
+{
+    unsigned int lamda=0;
+    lamda=dc;
+    lamda*=5;
+    CCPR2L=lamda>>2;
+    lamda<<=4;
+    lamda&=0x30;
+    CCP2CON&=0xCF;
+    CCP2CON|=lamda;
 }
