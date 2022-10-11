@@ -43,6 +43,9 @@ void conf_PWM(void);
 void duty_1(unsigned char dc);
 void duty_2(unsigned char dc);
 
+//      FUNCION PRUEBA ********************************************
+void Read_Sensor(int sensor);
+
 //-----------------------       INICIO FUNCIÓN | RUTINA PRINCIPAL
 void main(void)
 {
@@ -59,122 +62,16 @@ void main(void)
         duty_1(30);
         duty_2(70);
 
-
         ins_LCD(128);
-        voltaje =  Conversor_ADC(0);
-        s0  =  voltaje;
-        s0 =   s0 * 0.00488;
-        if( s0 < 2.3 )
-        {
-            ins_LCD(128);
-            write_LCD(sprintf(buffer,"0"));
-            // valor = valor & 0b01111111;
-            // ins_LCD(192);
-            // write_LCD(sprintf(buffer,"%i",valor));
-        }
-        else
-        {
-            ins_LCD(128);
-            write_LCD(sprintf(buffer,"1"));
-        }
+        Read_Sensor(0);
+        Read_Sensor(1);
+        Read_Sensor(2);
+        Read_Sensor(3);
+        Read_Sensor(4);
+        Read_Sensor(5);
+        Read_Sensor(6);
+        Read_Sensor(7);
 
-        voltaje =  Conversor_ADC(1);
-        s1 =  voltaje;
-        s1 =   s1 * 0.00488;
-        if( s1 < 2.3 )
-        {
-            ins_LCD(129);
-            write_LCD(sprintf(buffer,"0"));
-        }
-        else
-        {
-            ins_LCD(129);
-            write_LCD(sprintf(buffer,"1"));
-        }
-
-        voltaje =  Conversor_ADC(2);
-        s2 =  voltaje;
-        s2 =   s2 * 0.00488;
-        if( s2 < 2.3 )
-        {
-            ins_LCD(130);
-            write_LCD(sprintf(buffer,"0"));
-        }
-        else
-        {
-            ins_LCD(130);
-            write_LCD(sprintf(buffer,"1"));
-        }
-
-        voltaje =  Conversor_ADC(3);
-        s3 =  voltaje;
-        s3 =   s3 * 0.00488;
-        if( s3 < 2.3 )
-        {
-            ins_LCD(131);
-            write_LCD(sprintf(buffer,"0"));
-        }
-        else
-        {
-            ins_LCD(131);
-            write_LCD(sprintf(buffer,"1"));
-        }
-
-        voltaje =  Conversor_ADC(4);
-        s4 =  voltaje;
-        s4 =   s4 * 0.00488;
-        if( s4 < 2.3 )
-        {
-            ins_LCD(132);
-            write_LCD(sprintf(buffer,"0"));
-        }
-        else
-        {
-            ins_LCD(132);
-            write_LCD(sprintf(buffer,"1"));
-        }
-
-        voltaje =  Conversor_ADC(5);
-        s5 =  voltaje;
-        s5 =   s5 * 0.00488;
-        if( s5 < 2.3 )
-        {
-            ins_LCD(133);
-            write_LCD(sprintf(buffer,"0"));
-        }
-        else
-        {
-            ins_LCD(133);
-            write_LCD(sprintf(buffer,"1"));
-        }
-
-        voltaje =  Conversor_ADC(6);
-        s6 =  voltaje;
-        s6 =   s6 * 0.00488;
-        if( s6 < 2.3 )
-        {
-            ins_LCD(134);
-            write_LCD(sprintf(buffer,"0"));
-        }
-        else
-        {
-            ins_LCD(134);
-            write_LCD(sprintf(buffer,"1"));
-        }
-
-        voltaje =  Conversor_ADC(7);
-        s7 =  voltaje;
-        s7 =   s7 * 0.00488;
-        if( s7 < 2.3 )
-        {
-            ins_LCD(135);
-            write_LCD(sprintf(buffer,"0"));
-        }
-        else
-        {
-            ins_LCD(135);
-            write_LCD(sprintf(buffer,"1"));
-        }
         //__delay_ms(100);
 
         //ins_LCD(1);
@@ -334,3 +231,24 @@ void duty_2(unsigned char dc)
     CCP2CON&=0xCF;
     CCP2CON|=lamda;
 }
+
+
+//      FUNCION PRUEBA  **********************
+void Read_Sensor(int sensor)
+{
+    int s[7];
+    voltaje =  Conversor_ADC(sensor);
+    s[sensor] =  voltaje;
+    s[sensor] =   s[sensor] * 0.00488;
+    if( s[sensor] < 2.3 )
+    {
+        ins_LCD(128+sensor);
+        write_LCD(sprintf(buffer,"0"));
+    }
+    else
+    {
+        ins_LCD(128+sensor);
+        write_LCD(sprintf(buffer,"1"));
+    }
+}
+
