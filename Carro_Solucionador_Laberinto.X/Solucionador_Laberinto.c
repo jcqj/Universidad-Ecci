@@ -13,6 +13,10 @@
 #define EN RC5
 #define RS RC4
 #define bus LATD
+#define M1IN1 RB4
+#define M1IN2 RB5
+#define M2IN3 RB6
+#define M2IN4 RB7
 
 //..............variables globales y prototipos de funcion.........................................................
 //      VARIABLES PARA LCD
@@ -46,6 +50,13 @@ void duty_2(unsigned char dc);
 //      FUNCION PRUEBA ********************************************
 void Read_Sensor(int sensor);
 
+//      FUNCIONES MARCHA
+void Left(void);
+void Right(void);
+void Go(void);
+void Reverse(void);
+void Stop(void);
+
 //-----------------------       INICIO FUNCIÓN | RUTINA PRINCIPAL
 void main(void)
 {
@@ -72,7 +83,29 @@ void main(void)
         Read_Sensor(6);
         Read_Sensor(7);
 
-        //__delay_ms(100);
+        Left();
+        __delay_ms(1000);
+        
+        Stop();
+        __delay_ms(1000);
+
+        Right();
+        __delay_ms(1000);
+
+        Stop();
+        __delay_ms(1000);
+
+        Go();
+        __delay_ms(1000);
+
+        Stop();
+        __delay_ms(1000);
+
+        Reverse();
+        __delay_ms(1000);
+
+        Stop();
+        __delay_ms(1000);
 
         //ins_LCD(1);
     }
@@ -82,17 +115,17 @@ void main(void)
 //-----------------------       DECLARACIÓN FUNCIONES
 void setup_Ports_In_Out(void)
 {
-    TRISB   =   0xFF;         // puerto B de entrada
-    LATB    =   0;             // limpiar puerto B
-    PORTB   =   0;            // limpiar puerto B
+    TRISB   =   0x00;           // puerto B de salida
+    LATB    =   0;              // limpiar puerto B
+    PORTB   =   0;              // limpiar puerto B
     
-    TRISD   =   0x00;         // puerto D de salida
-    LATD    =   0;             // limpia puerto D
-    PORTD   =   0;            // limpia puerto D
+    TRISD   =   0x00;           // puerto D de salida
+    LATD    =   0;              // limpia puerto D
+    PORTD   =   0;              // limpia puerto D
     
-    TRISC   =   0x00;         // puerto C de salida
-    LATC    =   0;             // limpia puerto C
-    PORTC   =   0;            // limpia puerto C
+    TRISC   =   0x00;           // puerto C de salida
+    LATC    =   0;              // limpia puerto C
+    PORTC   =   0;              // limpia puerto C
     
     TRISE   =   0x07;
     LATE    =   0;
@@ -251,4 +284,43 @@ void Read_Sensor(int sensor)
         write_LCD(sprintf(buffer,"1"));
     }
 }
+
+
+//      FUNCIONES MARCHA
+void Left(void)
+{
+    M2IN3  =  0;       //  Out 3 en 0
+    M2IN4  =  1;       //  Out 4 en 1
+}
+
+void Stop(void)
+{
+    M1IN1  =  0;       //  Out 1 en 1
+    M1IN2  =  0;       //  Out 2 en 0
+    M2IN3  =  0;       //  Out 3 en 0
+    M2IN4  =  0;       //  Out 4 en 0
+}
+
+void Right(void)
+{
+    M1IN1  =  1;       //  Out 1 en 1
+    M1IN2  =  0;       //  Out 2 en 0
+}
+
+void Go(void)
+{
+    Left();
+    Right();
+}
+
+void Reverse(void)
+{
+    M1IN1  =  0;       //  Out 1 en 0
+    M1IN2  =  1;       //  Out 2 en 1
+    M2IN3  =  1;       //  Out 3 en 1
+    M2IN4  =  0;       //  Out 4 en 0
+}
+
+
+
 
