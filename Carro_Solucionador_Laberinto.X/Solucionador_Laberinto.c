@@ -10,13 +10,13 @@
 #pragma config LVP = OFF        // Low Voltage ICSP Enable bit (Low Voltage ICSP disabled)
 
 #define _XTAL_FREQ	4000000		// Definición del valor del cristal
-#define EN RC5
-#define RS RC4
+#define EN RC3      // Pin 15
+#define RS RC0      // Pin 18
 #define bus LATD
-#define M1IN1 RB4
-#define M1IN2 RB5
-#define M2IN3 RB6
-#define M2IN4 RB7
+#define M1IN1 RB4   // Pin 37
+#define M1IN2 RB5   // Pin 38
+#define M2IN3 RB6   // Pin 39
+#define M2IN4 RB7   // Pin 40
 
 //..............variables globales y prototipos de funcion.........................................................
 //      VARIABLES PARA LCD
@@ -26,7 +26,8 @@ float voltaje = 0;
 //      DECLARACIÓN VARIABLES DE LECTURA DE SENSORES
 unsigned int s0, s1, s2, s3, s4, s5, s6, s7;
 int valor = 0b11111111;
-
+int aux ;
+int s[7];
 
 //      FUNCIÓN CONFIGURACIÓN PUERTOS DE ENTRADA Y SALIDA
 void setup_Ports_In_Out(void);
@@ -74,6 +75,7 @@ void main(void)
         duty_2(70);
 
         ins_LCD(128);
+        
         Read_Sensor(0);
         Read_Sensor(1);
         Read_Sensor(2);
@@ -83,31 +85,40 @@ void main(void)
         Read_Sensor(6);
         Read_Sensor(7);
 
-        Left();
-        __delay_ms(1000);
+        aux=s[1];
+        if(aux==0)
+        {
+            Go();
+            __delay_ms(1000);
+        }
+        else if(aux==1)
+        {
+            Stop();
+            __delay_ms(1000);
+        }
         
-        Stop();
-        __delay_ms(1000);
+        
+        // Stop();
+        // __delay_ms(1000);
 
-        Right();
-        __delay_ms(1000);
+        // Right();
+        // __delay_ms(1000);
 
-        Stop();
-        __delay_ms(1000);
+        // Stop();
+        // __delay_ms(1000);
 
-        Go();
-        __delay_ms(1000);
+        // Go();
+        // __delay_ms(1000);
 
-        Stop();
-        __delay_ms(1000);
+        // Stop();
+        // __delay_ms(1000);
 
-        Reverse();
-        __delay_ms(1000);
+        // Reverse();
+        // __delay_ms(1000);
 
-        Stop();
-        __delay_ms(1000);
+        // Stop();
+        // __delay_ms(1000);
 
-        //ins_LCD(1);
     }
 }
 //-----------------------       FIN RUTINA PRINCIPAL
@@ -269,7 +280,7 @@ void duty_2(unsigned char dc)
 //      FUNCION PRUEBA  **********************
 void Read_Sensor(int sensor)
 {
-    int s[7];
+    // int s[7];
     voltaje =  Conversor_ADC(sensor);
     s[sensor] =  voltaje;
     s[sensor] =   s[sensor] * 0.00488;
