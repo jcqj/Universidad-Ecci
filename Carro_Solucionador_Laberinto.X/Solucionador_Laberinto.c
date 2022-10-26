@@ -51,6 +51,7 @@ void duty_2(unsigned char dc);
 
 //      FUNCION PRUEBA ********************************************
 unsigned char Read_Sensor(void);
+void Seguidor_Linea(unsigned char sensores);
 
 //      FUNCIONES MARCHA
 void Left(void);
@@ -68,11 +69,11 @@ void main(void)
     conf_PWM();
     ini_LCD();
 
-    ins_LCD(128);
-    write_LCD(sprintf(buffer, " Solucionador de"));
-    ins_LCD(192);
-    write_LCD(sprintf(buffer, "   LABERINTO"));
-    __delay_ms(2000);
+    // ins_LCD(128);
+    // write_LCD(sprintf(buffer, " Solucionador de"));
+    // ins_LCD(192);
+    // write_LCD(sprintf(buffer, "   LABERINTO"));
+    // __delay_ms(2000);
 
     duty_1(30);
     duty_2(70);
@@ -80,30 +81,31 @@ void main(void)
 
     while(1)
     {
-        Read_Sensor();
+        // Read_Sensor();
 
 
-        
-        // Stop();
-        // __delay_ms(1000);
+        Left();
+        __delay_ms(1000);
+        Stop();
+        __delay_ms(1000);
 
-        // Right();
-        // __delay_ms(1000);
+        Right();
+        __delay_ms(1000);
 
-        // Stop();
-        // __delay_ms(1000);
+        Stop();
+        __delay_ms(1000);
 
-        // Go();
-        // __delay_ms(1000);
+        Go();
+        __delay_ms(1000);
 
-        // Stop();
-        // __delay_ms(1000);
+        Stop();
+        __delay_ms(1000);
 
-        // Reverse();
-        // __delay_ms(1000);
+        Reverse();
+        __delay_ms(1000);
 
-        // Stop();
-        // __delay_ms(1000);
+        Stop();
+        __delay_ms(1000);
 
     }
 }
@@ -290,16 +292,68 @@ unsigned char Read_Sensor(void)
     return lectura;
 }
 
+void Seguidor_Linea(unsigned char sensores)
+{
+    switch (sensores)
+    {
+        case 0b00011000:
+            duty_1(60);
+            duty_2(60);
+            break;
+        case 0b00001100:
+            duty_1(65);
+            duty_2(55);
+            break;
+        case 0b00000110:
+            duty_1(70);
+            duty_2(50);
+            break;
+        case 0b00000011:
+            duty_1(75);
+            duty_2(30);
+            break;
+        case 0b00000001:
+            duty_1(75);
+            duty_2(0);
+            break;
+
+        case 0b00110000:
+            duty_1(55);
+            duty_2(65);
+            break;
+        case 0b01100000:
+            duty_1(50);
+            duty_2(70);
+            break;
+        case 0b11000000:
+            duty_1(30);
+            duty_2(75);
+            break;
+        case 0b10000000:
+        duty_1(0);
+        duty_2(75);
+        break;
+
+        default:
+            break;
+    }
+}
+
+
 
 //      FUNCIONES MARCHA
 void Left(void)
 {
+    ins_LCD(192);
+    write_LCD(sprintf(buffer, "   LEFT  " ));
     M2IN3  =  0;       //  Out 3 en 0
     M2IN4  =  1;       //  Out 4 en 1
 }
 
 void Stop(void)
 {
+    ins_LCD(192);
+    write_LCD(sprintf(buffer, "   STOP  "));
     M1IN1  =  0;       //  Out 1 en 1
     M1IN2  =  0;       //  Out 2 en 0
     M2IN3  =  0;       //  Out 3 en 0
@@ -308,18 +362,24 @@ void Stop(void)
 
 void Right(void)
 {
+    ins_LCD(192);
+    write_LCD(sprintf(buffer, "  RIGHT  "));
     M1IN1  =  1;       //  Out 1 en 1
     M1IN2  =  0;       //  Out 2 en 0
 }
 
 void Go(void)
 {
+    ins_LCD(192);
+    write_LCD(sprintf(buffer, "    RUN  "));
     Left();
     Right();
 }
 
 void Reverse(void)
 {
+    ins_LCD(193);
+    write_LCD(sprintf(buffer, "REVERSE "));
     M1IN1  =  0;       //  Out 1 en 0
     M1IN2  =  1;       //  Out 2 en 1
     M2IN3  =  1;       //  Out 3 en 1
