@@ -372,8 +372,10 @@ void Go(void)
 {
     ins_LCD(192);
     write_LCD(sprintf(buffer, "    RUN  "));
-    Left();
-    Right();
+    M1IN1  =  1;       //  Out 1 en 0
+    M1IN2  =  0;       //  Out 2 en 1
+    M2IN3  =  0;       //  Out 3 en 1
+    M2IN4  =  1;       //  Out 4 en 0
 }
 
 void Reverse(void)
