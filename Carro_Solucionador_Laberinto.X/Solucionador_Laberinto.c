@@ -10,13 +10,15 @@
 #pragma config LVP = OFF        // Low Voltage ICSP Enable bit (Low Voltage ICSP disabled)
 
 #define _XTAL_FREQ	4000000		// Definición del valor del cristal
-#define EN RC3      // Pin 15
-#define RS RC0      // Pin 18
+#define EN RC3      // Pin 18
+#define RS RC0      // Pin 15
 #define bus LATD
 #define M1IN1 RB4   // Pin 37
 #define M1IN2 RB5   // Pin 38
 #define M2IN3 RB6   // Pin 39
 #define M2IN4 RB7   // Pin 40
+
+#define Umbral 682  // Definimos umbral de sensores.
 
 //..............variables globales y prototipos de funcion.........................................................
 //      VARIABLES PARA LCD
@@ -24,7 +26,6 @@ unsigned char buffer[40];
 float voltaje = 0;
 
 //      DECLARACIÓN VARIABLES DE LECTURA DE SENSORES
-unsigned int s0, s1, s2, s3, s4, s5, s6, s7;
 int valor = 0b11111111;
 int aux ;
 int s[7];
@@ -49,7 +50,7 @@ void duty_1(unsigned char dc);
 void duty_2(unsigned char dc);
 
 //      FUNCION PRUEBA ********************************************
-void Read_Sensor(int sensor);
+unsigned char Read_Sensor(void);
 
 //      FUNCIONES MARCHA
 void Left(void);
@@ -61,42 +62,27 @@ void Stop(void);
 //-----------------------       INICIO FUNCIÓN | RUTINA PRINCIPAL
 void main(void)
 {
-    //      INICIALIZACIÓN DE VARIABLES SENSORES EN 0.
-    s0  =  s1  =  s2  =  s3  =  s4  =  s5  =  s6  =  s7  =  0;
     //      CONFIGURAMOS PINES DE ENTRADA Y SALIDA, CONVERSOR AD Y PWM.
     setup_Ports_In_Out();
     setup_AnalogDigitalConverter();
     conf_PWM();
     ini_LCD();
 
+    ins_LCD(128);
+    write_LCD(sprintf(buffer, " Solucionador de"));
+    ins_LCD(192);
+    write_LCD(sprintf(buffer, "   LABERINTO"));
+    __delay_ms(2000);
+
+    duty_1(30);
+    duty_2(70);
+    ins_LCD(1);
+
     while(1)
     {
-        duty_1(30);
-        duty_2(70);
+        Read_Sensor();
 
-        ins_LCD(128);
-        
-        Read_Sensor(0);
-        Read_Sensor(1);
-        Read_Sensor(2);
-        Read_Sensor(3);
-        Read_Sensor(4);
-        Read_Sensor(5);
-        Read_Sensor(6);
-        Read_Sensor(7);
 
-        aux=s[1];
-        if(aux==0)
-        {
-            Go();
-            __delay_ms(1000);
-        }
-        else if(aux==1)
-        {
-            Stop();
-            __delay_ms(1000);
-        }
-        
         
         // Stop();
         // __delay_ms(1000);
@@ -278,22 +264,30 @@ void duty_2(unsigned char dc)
 
 
 //      FUNCION PRUEBA  **********************
-void Read_Sensor(int sensor)
+unsigned char Read_Sensor(void)
 {
-    // int s[7];
-    voltaje =  Conversor_ADC(sensor);
-    s[sensor] =  voltaje;
-    s[sensor] =   s[sensor] * 0.00488;
-    if( s[sensor] < 2.3 )
+    unsigned char lectura = 0, i = 0;
+    unsigned int resultadoADC = 0;
+
+    ins_LCD(128);
+    for ( i = 0; i < 8; i++)
     {
-        ins_LCD(128+sensor);
-        write_LCD(sprintf(buffer,"0"));
+        resultadoADC = Conversor_ADC(7-i);
+        if ( resultadoADC < Umbral )
+        {
+            lectura |= 1;
+            dato_LCD('1');
+        }
+        else
+        {
+            dato_LCD('0');
+        }
+        if ( i != 7)
+        {
+            lectura <<= 1;
+        }
     }
-    else
-    {
-        ins_LCD(128+sensor);
-        write_LCD(sprintf(buffer,"1"));
-    }
+    return lectura;
 }
 
 
